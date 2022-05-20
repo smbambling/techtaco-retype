@@ -6,7 +6,7 @@ branding:
   logo: static/techtaco_light.png
   logoDark: static/techtaco_dark.png
   logoAlign: left
-  label: Docs
+  label: 2.0
 links:
   - text: Getting Started
     link: https://retype.com/guides/getting-started/
