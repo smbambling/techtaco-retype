@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blog</title>
+    <link>https://techtaco.org/blog/</link>
+    <description>Blog</description>
+    <copyright>© Copyright . All rights reserved.</copyright>
+    <lastBuildDate>Fri, 20 May 2022 17:20:48 GMT</lastBuildDate>
+    <generator>https://retype.com</generator>
+    <atom:link rel="self" type="application/rss+xml" href="https://techtaco.org/blog/feed.xml" />
+    <image>
+      <title>Blog</title>
+      <link>https://techtaco.org/blog/</link>
+      <url>https://techtaco.org/favicon.png</url>
+    </image>
+    <item>
+      <title>Entry 1</title>
+      <guid isPermaLink="true">https://techtaco.org/blog/entry1/</guid>
+      <description>This is a test blog entry about some things and stuff:wq</description>
+      <pubDate>Fri, 20 May 2022 17:20:48 GMT</pubDate>
+    </item>
+  </channel>
+</rss>
