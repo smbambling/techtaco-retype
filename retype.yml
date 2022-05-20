@@ -3,6 +3,9 @@ output: .retype
 url: https://docs.techtaco.org
 branding:
   title: TechTaco
+  logo: static/techtaco_light.png
+  logoDark: static/techtaco.dark.png
+  logoAlign: left
   label: Docs
 links:
   - text: Getting Started
