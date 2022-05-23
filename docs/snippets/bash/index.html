@@ -9,18 +9,21 @@
     <meta name="generator" content="Retype 2.2">
 
     <!-- Primary Meta Tags -->
-    <title>Docs</title>
-    <meta name="title" content="Docs">
+    <title>Bash</title>
+    <meta name="title" content="Bash">
+    <meta name="description" content="In a directory where you suspect there might be a lot of inode usage run the following" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://techtaco.org/docs/">
-    <meta property="og:title" content="Docs">
+    <meta property="og:url" content="https://techtaco.org/docs/snippets/bash/">
+    <meta property="og:title" content="Bash">
+    <meta property="og:description" content="In a directory where you suspect there might be a lot of inode usage run the following">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://techtaco.org/docs/">
-    <meta property="twitter:title" content="Docs">
+    <meta property="twitter:url" content="https://techtaco.org/docs/snippets/bash/">
+    <meta property="twitter:title" content="Bash">
+    <meta property="twitter:description" content="In a directory where you suspect there might be a lot of inode usage run the following">
 
     <script>(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
@@ -30,6 +33,7 @@
     <script type="text/javascript" src="/resources/js/config.js?v=2.2.706619508082" defer data-turbo-track="reload"></script>
     <script type="text/javascript" src="/resources/js/retype.js?v=2.2" defer data-turbo-track="reload"></script>
     <script id="lunr-js" type="text/javascript" src="/resources/js/lunr.js?v=2.2.706619508082" defer></script>
+    <script id="prism-js" type="text/javascript" src="/resources/js/prism.js?v=2.2.706619508082" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -196,11 +200,105 @@
                                 <div id="docs-sidebar-right-toggle"></div>
                 
                                 <!-- Page content  -->
-<doc-anchor-target id="docs" class="break-words">
+<doc-anchor-target id="useful-bash-commands-snippets-and-oneliners" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#docs">#</doc-anchor-trigger>
-        <span>Docs</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#useful-bash-commands-snippets-and-oneliners">#</doc-anchor-trigger>
+        <span>Useful Bash Commands, Snippets and Oneliners</span>
     </h1>
+</doc-anchor-target>
+<doc-anchor-target id="display-the-access-rights-in-octal-of-all-files-with-in-a-directory">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#display-the-access-rights-in-octal-of-all-files-with-in-a-directory">#</doc-anchor-trigger>
+        <span>Display the access rights in octal of all files with in a directory</span>
+    </h2>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">stat -c &quot;%a %n&quot; *</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="diff-ing-a-local-and-remote-file">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#diff-ing-a-local-and-remote-file">#</doc-anchor-trigger>
+        <span>Diff-ing a local and remote file</span>
+    </h2>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">ssh node1.example.com cat '/full/file/path/text.txt' \
+| diff -y --suppress-common-lines /full/file/path/text.txt -</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="diff-ing-files-on-two-remote-systems">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#diff-ing-files-on-two-remote-systems">#</doc-anchor-trigger>
+        <span>Diff-ing files on two remote systems</span>
+    </h2>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">diff -y --suppress-common-lines \
+&lt;(ssh node1.example.com 'cat /full/file/path/text.txt') \
+&lt;( ssh node2.example.com 'cat /full/file/path/text.txt')</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="sort-files-by-human-readable-size">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#sort-files-by-human-readable-size">#</doc-anchor-trigger>
+        <span>Sort files by human readable size</span>
+    </h2>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">du -sk * | sort -rn | awk '{print $2}' | xargs -ia du -hs &quot;a&quot;</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">du -sk * | sort -rn | awk '{ split( &quot;KB MB GB&quot; , v ); s=1; while( $1&gt;1024 ){ $1/=1024; s++ } print int($1) v[s], $2 }'</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="determine-inode-usage--this-can-take-several-minutes-to-complete-">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#determine-inode-usage--this-can-take-several-minutes-to-complete-">#</doc-anchor-trigger>
+        <span>Determine inode Usage ( This can take several minutes to complete )</span>
+    </h2>
+</doc-anchor-target>
+<p>In a directory where you suspect there might be a lot of inode usage run the following</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">find . -type d |
+while
+    read line
+    do
+        echo &quot;$( find &quot;$line&quot; -maxdepth 1 | wc -l) $line&quot;
+        done |
+        sort -rn | less</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="test-gpgpgp-passphrase">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#test-gpgpgp-passphrase">#</doc-anchor-trigger>
+        <span>Test GPG/PGP Passphrase</span>
+    </h2>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">echo &quot;1234&quot; | gpg --no-use-agent -o /dev/null --local-user &lt;keyID&gt; -as - \
+&amp;&amp; echo &quot;The correct passphrase was entered for this key&quot;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="list-linux-processes-using-swap-memory">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#list-linux-processes-using-swap-memory">#</doc-anchor-trigger>
+        <span>List Linux processes using SWAP memory</span>
+    </h2>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">for file in /proc/*/status ; do awk '/VmSwap|Name/{printf $2 &quot; &quot; $3}END{ print &quot;&quot;}' $file; done | sort -k 2 -n -r | less</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="list-the-free-pv-disk-space-not-used-by-lvm">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#list-the-free-pv-disk-space-not-used-by-lvm">#</doc-anchor-trigger>
+        <span>List the free PV disk space not used by LVM</span>
+    </h2>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">freepe=$(sudo pvdisplay | grep 'Free PE' | awk '{ print $3 }') \
+&amp;&amp; pesize=$(sudo pvdisplay | grep 'PE Size' | awk '{ print int( $3 ) }') \
+&amp;&amp; mbpe=$(expr ${freepe} \* ${pesize}) &amp;&amp; echo $(expr ${mbpe} / 1024) GB</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="references">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#references">#</doc-anchor-trigger>
+        <span>References</span>
+    </h2>
 </doc-anchor-target>
 
                                 
@@ -211,20 +309,20 @@
                             
                                 <nav class="flex mt-14">
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="/">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="/docs/snippets/awk/">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                             <span>
                                                 <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
-                                                <span class="block mt-1">Welcome</span>
+                                                <span class="block mt-1">Awk</span>
                                             </span>
                                         </a>
                                     </div>
                             
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="/docs/snippets/">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="/docs/snippets/sed/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">Snippets</span>
+                                                <span class="block mt-1">Sed</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>
@@ -278,6 +376,6 @@
 
     <div id="docs-overlay-target"></div>
 
-    <script>window.__DOCS__ = { "title": "Docs", icon: "file", hasPrism: false, hasMermaid: false, hasMath: false }</script>
+    <script>window.__DOCS__ = { "title": "Bash", icon: "file", hasPrism: true, hasMermaid: false, hasMath: false }</script>
 </body>
 </html>
