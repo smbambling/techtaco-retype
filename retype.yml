@@ -7,7 +7,7 @@ branding:
   logo: static/techtaco_light.png
   logoDark: static/techtaco_dark.png
   logoAlign: left
-  label: 2.0
+  label: New
 
 links:
   - text: Home
