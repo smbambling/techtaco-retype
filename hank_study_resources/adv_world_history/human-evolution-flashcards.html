@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#334155">
+  <title>Human Evolution Flash Cards</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #64748b;
+      --paper: #fffdf8;
+      --canvas: #f4efe5;
+      --line: #ded7c8;
+      --accent: #d85d3f;
+      --accent-dark: #aa3e29;
+      --navy: #334155;
+      --answer: #eaf3ed;
+      --answer-line: #bdd3c5;
+      --shadow: 0 18px 50px rgba(43, 36, 25, 0.13);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: clamp(18px, 4vw, 44px);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(216, 93, 63, 0.11), transparent 29rem),
+        radial-gradient(circle at 92% 88%, rgba(51, 65, 85, 0.10), transparent 30rem),
+        var(--canvas);
+      font-family: ui-rounded, "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif;
+    }
+
+    button { font: inherit; }
+
+    .app {
+      width: min(760px, 100%);
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      color: var(--accent-dark);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.75rem, 5vw, 2.65rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+    }
+
+    .shortcut-note {
+      margin: 0 0 3px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    kbd {
+      display: inline-block;
+      min-width: 1.65rem;
+      padding: 2px 6px;
+      border: 1px solid #c8c0b1;
+      border-bottom-width: 2px;
+      border-radius: 6px;
+      color: #49566b;
+      background: rgba(255, 255, 255, 0.68);
+      font: 600 0.72rem/1.35 system-ui, sans-serif;
+      text-align: center;
+    }
+
+    .progress-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .progress-track {
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #ded8cc;
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+      transition: width 220ms ease;
+    }
+
+    .progress-text {
+      min-width: 7rem;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 750;
+      text-align: right;
+    }
+
+    .scene {
+      min-height: clamp(330px, 54vh, 440px);
+      perspective: 1300px;
+    }
+
+    .flashcard {
+      position: relative;
+      width: 100%;
+      min-height: inherit;
+      display: block;
+      padding: 0;
+      border: 0;
+      border-radius: 26px;
+      color: inherit;
+      background: transparent;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 460ms cubic-bezier(.2,.75,.2,1), box-shadow 180ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .flashcard:hover { box-shadow: 0 22px 58px rgba(43, 36, 25, 0.17); }
+    .flashcard:focus-visible { outline: 4px solid rgba(216, 93, 63, 0.42); outline-offset: 5px; }
+    .flashcard.is-flipped { transform: rotateY(180deg); }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(28px, 7vw, 62px);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: inherit;
+      background: var(--paper);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .face::after {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border: 1px solid rgba(51, 65, 85, 0.08);
+      border-radius: 18px;
+      pointer-events: none;
+    }
+
+    .back {
+      border-color: var(--answer-line);
+      background: var(--answer);
+      transform: rotateY(180deg);
+    }
+
+    .side-label {
+      position: absolute;
+      top: 26px;
+      left: 28px;
+      color: var(--accent-dark);
+      font-size: 0.72rem;
+      font-weight: 850;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .back .side-label { color: #3c6e53; }
+
+    .category {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 22px;
+      padding: 7px 12px;
+      border: 1px solid #ded4c1;
+      border-radius: 999px;
+      color: #596579;
+      background: #f7f0e3;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.035em;
+    }
+
+    .category::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .back .category {
+      border-color: #c8d9cd;
+      background: rgba(255,255,255,0.5);
+    }
+
+    .back .category::before { background: #4f7f65; }
+
+    .card-text {
+      max-width: 610px;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.5rem, 4.4vw, 2.35rem);
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      line-height: 1.28;
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    .tap-hint {
+      position: absolute;
+      right: 28px;
+      bottom: 24px;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr auto auto 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .control {
+      min-height: 48px;
+      padding: 11px 17px;
+      border: 1px solid #cfc7b8;
+      border-radius: 14px;
+      color: var(--navy);
+      background: rgba(255, 253, 248, 0.82);
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+    }
+
+    .control:hover { background: #fff; border-color: #ada494; }
+    .control:active { transform: translateY(1px); }
+    .control:focus-visible { outline: 3px solid rgba(216, 93, 63, 0.38); outline-offset: 2px; }
+    .control:disabled { opacity: 0.42; cursor: not-allowed; }
+    .control:disabled:active { transform: none; }
+
+    .next {
+      color: white;
+      border-color: var(--navy);
+      background: var(--navy);
+    }
+
+    .next:hover { border-color: #1e293b; background: #1e293b; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 620px) {
+      body { align-items: start; padding: 18px 14px 24px; }
+      header { align-items: start; }
+      .shortcut-note { display: none; }
+      .scene { min-height: min(430px, 58vh); }
+      .face { padding: 54px 25px 48px; }
+      .side-label { top: 22px; left: 23px; }
+      .tap-hint { right: 23px; bottom: 20px; }
+      .controls { grid-template-columns: 1fr 1fr; }
+      .previous { order: 1; }
+      .next { order: 2; }
+      .shuffle { order: 3; }
+      .restart { order: 4; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" aria-labelledby="page-title">
+    <header>
+      <div>
+        <p class="eyebrow">Study deck</p>
+        <h1 id="page-title">Human Evolution</h1>
+      </div>
+      <p class="shortcut-note"><kbd>Space</kbd> flip &nbsp; <kbd>←</kbd> <kbd>→</kbd> move</p>
+    </header>
+
+    <div class="progress-row">
+      <div class="progress-track" role="progressbar" aria-label="Deck progress" aria-valuemin="1" aria-valuemax="38" aria-valuenow="1">
+        <div class="progress-fill"></div>
+      </div>
+      <div class="progress-text" aria-live="polite">Card 1 of 38</div>
+    </div>
+
+    <div class="scene">
+      <button class="flashcard" type="button" aria-label="Show answer">
+        <span class="face front" aria-hidden="false">
+          <span class="side-label">Question</span>
+          <span class="category"></span>
+          <span class="card-text question"></span>
+          <span class="tap-hint">Tap to reveal</span>
+        </span>
+        <span class="face back" aria-hidden="true">
+          <span class="side-label">Answer</span>
+          <span class="category"></span>
+          <span class="card-text answer"></span>
+          <span class="tap-hint">Tap for question</span>
+        </span>
+      </button>
+    </div>
+
+    <div class="controls" aria-label="Flash card controls">
+      <button class="control previous" type="button" aria-label="Previous card">← Previous</button>
+      <button class="control shuffle" type="button">Shuffle</button>
+      <button class="control restart" type="button">Restart</button>
+      <button class="control next" type="button" aria-label="Next card">Next →</button>
+    </div>
+
+    <p class="sr-only" id="card-status" aria-live="polite"></p>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const originalCards = [
+        { category: "Paleolithic Era", question: "What does Paleolithic mean?", answer: "Old Stone Age" },
+        { category: "Paleolithic Era", question: "About when was the Paleolithic Era?", answer: "2.5 million BCE – 10,000 BCE" },
+        { category: "Paleolithic Era", question: "Were Paleolithic humans nomadic or settled?", answer: "Nomadic" },
+        { category: "Paleolithic Era", question: "Why did Paleolithic humans move from place to place?", answer: "To find food" },
+        { category: "Paleolithic Era", question: "How did Paleolithic humans get food?", answer: "Hunting and gathering" },
+        { category: "Paleolithic Era", question: "What important tools did Paleolithic humans develop?", answer: "Stone tools" },
+        { category: "Paleolithic Era", question: "What major discovery helped Paleolithic humans cook and survive?", answer: "Fire" },
+        { category: "Paleolithic Era", question: "Where did many Paleolithic humans live?", answer: "Caves and temporary shelters" },
+        { category: "Paleolithic Era", question: "What type of communication developed during the Paleolithic Era?", answer: "Oral language" },
+        { category: "Paleolithic Era", question: "What is an example of Paleolithic art?", answer: "Cave art" },
+
+        { category: "Neolithic Era", question: "What does Neolithic mean?", answer: "New Stone Age" },
+        { category: "Neolithic Era", question: "About when did the Neolithic Era begin?", answer: "Around 10,000 BCE" },
+        { category: "Neolithic Era", question: "What major change began the Neolithic Revolution?", answer: "The development of agriculture and farming" },
+        { category: "Neolithic Era", question: "What is the Neolithic Revolution?", answer: "The change from hunting and gathering to farming and settled life" },
+        { category: "Neolithic Era", question: "How did farming change human movement?", answer: "People became less nomadic and formed permanent settlements" },
+        { category: "Neolithic Era", question: "Name two technologies developed during the Neolithic Era.", answer: "Examples include advanced tools, pottery, and weaving" },
+        { category: "Neolithic Era", question: "Why was pottery important?", answer: "It allowed people to store food and other goods" },
+        { category: "Neolithic Era", question: "What was a loom used for?", answer: "Weaving cloth" },
+        { category: "Neolithic Era", question: "What happened when farming produced extra food?", answer: "People could create a surplus" },
+        { category: "Neolithic Era", question: "How did food surpluses affect jobs?", answer: "They allowed job specialization" },
+        { category: "Neolithic Era", question: "What is job specialization?", answer: "People performing different specialized jobs instead of everyone gathering food" },
+        { category: "Neolithic Era", question: "What grew as people stopped being nomadic?", answer: "Villages, towns, and cities" },
+        { category: "Neolithic Era", question: "Why did governments and leaders develop?", answer: "Larger permanent communities needed organization and leadership" },
+
+        { category: "Early Humans & Migration", question: "What does BCE mean?", answer: "Before Common Era" },
+        { category: "Early Humans & Migration", question: "What does BC mean?", answer: "Before Christ" },
+        { category: "Early Humans & Migration", question: "What does CE mean?", answer: "Common Era" },
+        { category: "Early Humans & Migration", question: "What does AD mean?", answer: "Anno Domini" },
+        { category: "Early Humans & Migration", question: "What does Homo sapiens refer to?", answer: "Modern humans" },
+        { category: "Early Humans & Migration", question: "Where did early humans originate?", answer: "Africa" },
+        { category: "Early Humans & Migration", question: "What happened as early humans migrated?", answer: "They gradually spread out of Africa to other continents" },
+        { category: "Early Humans & Migration", question: "What early human species was one of the first to migrate out of Africa?", answer: "Homo erectus" },
+        { category: "Early Humans & Migration", question: "What important behavior is associated with Homo erectus in the notes?", answer: "Using fire and cooking food" },
+        { category: "Early Humans & Migration", question: "How did Paleolithic people survive in their environment?", answer: "By hunting, gathering, moving, and adapting to their surroundings" },
+
+        { category: "Archaeology & Dating", question: "What evidence can scientists study to learn about early humans?", answer: "Fossils, artifacts, and human remains" },
+        { category: "Archaeology & Dating", question: "What is an artifact?", answer: "An object made or used by humans" },
+        { category: "Archaeology & Dating", question: "What can Carbon-14 dating help scientists determine?", answer: "The age of certain once-living materials" },
+        { category: "Archaeology & Dating", question: "Why are fossils and artifacts important?", answer: "They provide evidence about how early humans lived" },
+
+        { category: "Big-Picture Comparison", question: "What is the biggest difference between Paleolithic and Neolithic life?", answer: "Paleolithic = nomadic hunting and gathering. Neolithic = settled farming communities." }
+      ];
+
+      let cards = [...originalCards];
+      let currentIndex = 0;
+      let isFlipped = false;
+
+      const flashcard = document.querySelector(".flashcard");
+      const front = document.querySelector(".front");
+      const back = document.querySelector(".back");
+      const question = document.querySelector(".question");
+      const answer = document.querySelector(".answer");
+      const categories = document.querySelectorAll(".category");
+      const progressText = document.querySelector(".progress-text");
+      const progressTrack = document.querySelector(".progress-track");
+      const progressFill = document.querySelector(".progress-fill");
+      const previousButton = document.querySelector(".previous");
+      const nextButton = document.querySelector(".next");
+      const shuffleButton = document.querySelector(".shuffle");
+      const restartButton = document.querySelector(".restart");
+      const cardStatus = document.querySelector("#card-status");
+
+      function renderCard(announce = true) {
+        const card = cards[currentIndex];
+        question.textContent = card.question;
+        answer.textContent = card.answer;
+        categories.forEach((element) => { element.textContent = card.category; });
+
+        isFlipped = false;
+        flashcard.classList.remove("is-flipped");
+        flashcard.setAttribute("aria-label", `Question: ${card.question}. Show answer`);
+        front.setAttribute("aria-hidden", "false");
+        back.setAttribute("aria-hidden", "true");
+
+        const position = currentIndex + 1;
+        const total = cards.length;
+        progressText.textContent = `Card ${position} of ${total}`;
+        progressTrack.setAttribute("aria-valuenow", String(position));
+        progressTrack.setAttribute("aria-valuemax", String(total));
+        progressFill.style.width = `${(position / total) * 100}%`;
+
+        previousButton.disabled = currentIndex === 0;
+        nextButton.disabled = currentIndex === total - 1;
+
+        if (announce) cardStatus.textContent = `Card ${position} of ${total}. Question: ${card.question}`;
+      }
+
+      function flipCard() {
+        const card = cards[currentIndex];
+        isFlipped = !isFlipped;
+        flashcard.classList.toggle("is-flipped", isFlipped);
+        front.setAttribute("aria-hidden", String(isFlipped));
+        back.setAttribute("aria-hidden", String(!isFlipped));
+        flashcard.setAttribute("aria-label", isFlipped
+          ? `Answer: ${card.answer}. Show question`
+          : `Question: ${card.question}. Show answer`);
+        cardStatus.textContent = isFlipped ? `Answer: ${card.answer}` : `Question: ${card.question}`;
+      }
+
+      function moveCard(direction) {
+        const newIndex = currentIndex + direction;
+        if (newIndex < 0 || newIndex >= cards.length) return;
+        currentIndex = newIndex;
+        renderCard();
+      }
+
+      function shuffleCards() {
+        cards = [...cards];
+        for (let i = cards.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [cards[i], cards[j]] = [cards[j], cards[i]];
+        }
+        currentIndex = 0;
+        renderCard(false);
+        cardStatus.textContent = `Deck shuffled. Card 1 of ${cards.length}. Question: ${cards[0].question}`;
+      }
+
+      function restartDeck() {
+        cards = [...originalCards];
+        currentIndex = 0;
+        renderCard(false);
+        cardStatus.textContent = `Deck restarted. Card 1 of ${cards.length}. Question: ${cards[0].question}`;
+      }
+
+      flashcard.addEventListener("click", flipCard);
+      previousButton.addEventListener("click", () => moveCard(-1));
+      nextButton.addEventListener("click", () => moveCard(1));
+      shuffleButton.addEventListener("click", shuffleCards);
+      restartButton.addEventListener("click", restartDeck);
+
+      window.addEventListener("keydown", (event) => {
+        if (event.altKey || event.ctrlKey || event.metaKey) return;
+
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          moveCard(-1);
+          return;
+        }
+
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          moveCard(1);
+          return;
+        }
+
+        if (event.key === " " || event.key === "Enter") {
+          const activeElement = document.activeElement;
+          const isOtherButton = activeElement instanceof HTMLButtonElement && activeElement !== flashcard;
+          if (isOtherButton) return;
+          event.preventDefault();
+          flipCard();
+        }
+      });
+
+      renderCard(false);
+    })();
+  </script>
+</body>
+</html>
