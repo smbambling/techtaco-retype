@@ -3,4 +3,4 @@ icon: file-directory
 ---
 # Advanced Biology Resources
 
-- [Flash Cards](biochemistry-flash-cards.html}
+- [Flash Cards](biochemistry-flash-cards.md}
