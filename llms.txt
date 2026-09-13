@@ -4,8 +4,8 @@
 
 - [Welcome](https://techtaco.org/index.md): Welcome
 - [Docs](https://techtaco.org/docs/index.md)
-- [Disclaimer](https://techtaco.org/disclaimer.md): TechTaco.ORG Terms And Conditions Of Use
 - [Hanks Study Resources](https://techtaco.org/hank_study_resources/index.md)
+- [Disclaimer](https://techtaco.org/disclaimer.md): TechTaco.ORG Terms And Conditions Of Use
 
 ## Docs
 
@@ -16,6 +16,10 @@
 - [Bash Parameter Subsitition](https://techtaco.org/docs/snippets/bash_parameter_substitution.md): Variable
 - [Bash](https://techtaco.org/docs/snippets/bash.md): In a directory where you suspect there might be a lot of inode usage run the following
 - [Sed](https://techtaco.org/docs/snippets/sed.md)
+
+## Hanks Study Resources
+
+- [Advanced Biology Resources](https://techtaco.org/hank_study_resources/adv_biology/index.md): [Flash Cards](biochemistry-flash-cards.html}
 
 ## Blog
 
