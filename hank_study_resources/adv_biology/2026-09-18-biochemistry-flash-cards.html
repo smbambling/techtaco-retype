@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Biochemistry Flash Cards</title>
+  <meta name="description" content="Interactive biochemistry study flash cards with right, wrong, and needs-practice tracking.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233157d5'/%3E%3Cpath d='M18 15h22a8 8 0 0 1 8 8v26H26a8 8 0 0 0-8 0V15zm8 8h14v5H26v-5zm0 10h14v5H26v-5z' fill='white'/%3E%3C/svg%3E">
   <style>
     :root {
       color-scheme: light dark;
@@ -51,6 +53,16 @@
     .label { color: var(--accent); font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
     .question { font-size: clamp(1.2rem, 4.5vw, 1.65rem); line-height: 1.4; margin: 16px 0; }
     .answer { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 22px; font-size: 1.1rem; line-height: 1.55; }
+    .diagram { display: block; width: min(100%, 460px); height: auto; margin: 16px auto 0; color: var(--text); }
+    .diagram text { fill: var(--text); font: 600 14px system-ui, sans-serif; }
+    .diagram .muted-line { stroke: var(--muted); }
+    .diagram .accent-line { stroke: var(--accent); }
+    .diagram .accent-fill { fill: var(--accent); }
+    .diagram .surface-fill { fill: var(--surface); }
+    .diagram .good-fill { fill: var(--goodBg); }
+    .diagram .bad-fill { fill: var(--badBg); }
+    .visual-copy { font-size: 1rem; line-height: 1.45; }
+    .answer-list { text-align: left; width: min(100%, 520px); margin: 0 auto; }
     .hint { color: var(--muted); font-size: .88rem; margin-top: 18px; }
     .actions { justify-content: center; margin: 16px 0; }
     .correct { color: var(--good); background: var(--goodBg); border-color: var(--good); }
@@ -91,6 +103,7 @@
         </select>
       </label>
       <button id="shuffle" type="button">Shuffle cards</button>
+      <button id="reset" type="button">Reset stats</button>
     </div>
 
     <div class="progress" role="progressbar" aria-label="Deck progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progressBar"></div></div>
@@ -116,8 +129,7 @@
     <details>
       <summary>Keyboard shortcuts and progress</summary>
       <p><strong>Space:</strong> reveal answer · <strong>1:</strong> wrong · <strong>2:</strong> right · <strong>←/→:</strong> previous/next.</p>
-      <p>Your right/wrong history is saved automatically in this browser. Use “Needs practice” to study cards whose latest result was wrong.</p>
-      <button id="reset" type="button">Reset all progress</button>
+      <p>Your right/wrong history is saved automatically in this browser and remains after a page refresh. Use “Needs practice” to study cards whose latest result was wrong.</p>
     </details>
   </main>
 
@@ -155,12 +167,25 @@
       {q:"What is an independent variable?", a:"The factor deliberately changed or manipulated by the experimenter."},
       {q:"What is a dependent variable?", a:"The factor measured or observed in response to the independent variable."},
       {q:"What is a control in an experiment?", a:"A comparison group or standard that does not receive the tested treatment, helping show whether the independent variable caused the result."},
-      {q:"What is a constant in an experiment?", a:"A factor kept the same for all groups and trials so it does not affect the results."}
+      {q:"What is a constant in an experiment?", a:"A factor kept the same for all groups and trials so it does not affect the results."},
+
+      {q:`<div class="visual-copy"><strong>Complete the carbohydrate chart row.</strong><br>State its monomer, main function, and a representative drawing.</div>`, a:`<div class="answer-list"><strong>Carbohydrate</strong><br>Monomer: monosaccharide (such as glucose)<br>Function: short-term energy; some provide structure</div><svg class="diagram" viewBox="0 0 360 165" role="img" aria-label="Simplified glucose ring"><title>Representative carbohydrate drawing</title><polygon points="105,35 190,35 235,82 190,130 105,130 60,82" fill="none" stroke="currentColor" stroke-width="4"/><text x="133" y="22">glucose ring</text><text x="78" y="89">C</text><text x="215" y="89">O</text><text x="118" y="155">monosaccharide</text></svg>`},
+      {q:`<div class="visual-copy"><strong>Complete the lipid chart row.</strong><br>State its building blocks, main function, and a representative drawing.</div>`, a:`<div class="answer-list"><strong>Lipid</strong><br>Building blocks: glycerol and fatty acids<br>Function: long-term energy storage; membranes and insulation</div><svg class="diagram" viewBox="0 0 420 190" role="img" aria-label="Glycerol joined to three fatty acid tails"><title>Representative lipid drawing</title><line x1="100" y1="35" x2="100" y2="155" stroke="currentColor" stroke-width="8" stroke-linecap="round"/><text x="20" y="100">glycerol</text><polyline points="108,48 155,48 178,34 205,62 232,40 260,62 292,40 330,55" fill="none" stroke="var(--accent)" stroke-width="4"/><polyline points="108,95 155,95 180,78 207,108 235,83 264,108 295,84 332,100" fill="none" stroke="var(--accent)" stroke-width="4"/><polyline points="108,142 155,142 180,126 207,156 235,130 264,156 295,132 332,148" fill="none" stroke="var(--accent)" stroke-width="4"/><text x="180" y="180">three fatty acid tails</text></svg>`},
+      {q:`<div class="visual-copy"><strong>Complete the protein chart row.</strong><br>State its monomer, major functions, and a representative drawing.</div>`, a:`<div class="answer-list"><strong>Protein</strong><br>Monomer: amino acid<br>Functions: enzymes, antibodies, transport, hormones, and structure</div><svg class="diagram" viewBox="0 0 420 170" role="img" aria-label="A folded chain of linked amino acids"><title>Representative protein drawing</title><path d="M45 100 C90 25 135 145 180 72 S270 25 315 92 S370 145 395 70" fill="none" stroke="var(--accent)" stroke-width="5"/><g class="surface-fill" stroke="currentColor" stroke-width="3"><circle cx="48" cy="96" r="13"/><circle cx="105" cy="65" r="13"/><circle cx="160" cy="101" r="13"/><circle cx="220" cy="61" r="13"/><circle cx="278" cy="69" r="13"/><circle cx="333" cy="109" r="13"/><circle cx="390" cy="75" r="13"/></g><text x="112" y="155">folded amino-acid chain</text></svg>`},
+      {q:`<div class="visual-copy"><strong>Complete the nucleic-acid chart row.</strong><br>State its monomer, main function, and a representative drawing.</div>`, a:`<div class="answer-list"><strong>Nucleic acid</strong><br>Monomer: nucleotide<br>Function: stores and transmits hereditary information</div><svg class="diagram" viewBox="0 0 440 190" role="img" aria-label="Chain of phosphate sugar and base nucleotide units"><title>Representative nucleic acid drawing</title><g fill="none" stroke="currentColor" stroke-width="3"><circle cx="70" cy="75" r="24"/><polygon points="135,50 165,65 158,100 120,100 112,66"/><rect x="195" y="55" width="58" height="42" rx="5"/><line x1="94" y1="75" x2="112" y2="75"/><line x1="160" y1="75" x2="195" y2="75"/></g><text x="60" y="81">P</text><text x="126" y="81">sugar</text><text x="207" y="81">base</text><path d="M280 35 C355 55 355 120 280 145 M385 35 C310 55 310 120 385 145 M298 52 L367 52 M286 78 L379 78 M286 104 L379 104 M298 130 L367 130" fill="none" stroke="var(--accent)" stroke-width="4"/><text x="35" y="145">one nucleotide</text><text x="302" y="170">DNA</text></svg>`},
+
+      {q:`<div class="visual-copy"><strong>Match each bond with its description.</strong><br><br>A. Polar &nbsp; B. Nonpolar &nbsp; C. Hydrogen<br><br>1. Equal sharing of electrons<br>2. Attraction between two polar molecules<br>3. Unequal sharing creates partial +/− poles</div>`, a:`<div class="answer-list"><strong>A → 3:</strong> Polar bonds share electrons unequally.<br><br><strong>B → 1:</strong> Nonpolar bonds share electrons equally.<br><br><strong>C → 2:</strong> Hydrogen bonds are attractions between polar molecules.</div>`},
+
+      {q:`<div class="visual-copy"><strong>Draw and label an enzyme, substrate, and active site.</strong><br>Use the unlabeled model as a guide, then reveal the labels.</div><svg class="diagram" viewBox="0 0 440 220" role="img" aria-label="Unlabeled substrate approaching an enzyme"><title>Unlabeled enzyme model</title><path d="M55 178 Q40 75 130 52 Q205 35 245 92 L208 125 L166 96 L128 131 L165 180 Q105 205 55 178Z" fill="var(--goodBg)" stroke="currentColor" stroke-width="4"/><path d="M285 70 L325 42 L365 72 L340 111 L298 105Z" fill="var(--badBg)" stroke="var(--accent)" stroke-width="4"/><path d="M275 102 L244 112" stroke="var(--muted)" stroke-width="3" stroke-dasharray="7 7"/><text x="125" y="215">A</text><text x="326" y="35">B</text><text x="187" y="91">C</text></svg>`, a:`<svg class="diagram" viewBox="0 0 440 230" role="img" aria-label="Labeled enzyme substrate and active site"><title>Labeled enzyme model</title><path d="M55 178 Q40 75 130 52 Q205 35 245 92 L208 125 L166 96 L128 131 L165 180 Q105 205 55 178Z" fill="var(--goodBg)" stroke="currentColor" stroke-width="4"/><path d="M285 70 L325 42 L365 72 L340 111 L298 105Z" fill="var(--badBg)" stroke="var(--accent)" stroke-width="4"/><path d="M275 102 L244 112" stroke="var(--muted)" stroke-width="3" stroke-dasharray="7 7"/><text x="76" y="213">A: enzyme</text><text x="284" y="30">B: substrate</text><text x="183" y="83">C: active site</text></svg><div class="visual-copy">The substrate fits into the enzyme’s specially shaped active site.</div>`},
+
+      {q:`<div class="visual-copy"><strong>Define activation energy and explain how an enzyme changes it.</strong><br>Sketch an energy-versus-reaction-progress graph before revealing the answer.</div>`, a:`<div class="visual-copy">Activation energy is the minimum energy needed to start a reaction. An enzyme lowers the activation-energy barrier, so the reaction happens faster.</div><svg class="diagram" viewBox="0 0 500 270" role="img" aria-label="Energy graph showing lower activation energy with an enzyme"><title>Activation energy with and without an enzyme</title><line x1="60" y1="215" x2="465" y2="215" stroke="currentColor" stroke-width="3"/><line x1="60" y1="215" x2="60" y2="25" stroke="currentColor" stroke-width="3"/><text x="185" y="255">Reaction progress</text><text x="18" y="130" transform="rotate(-90 18 130)">Energy</text><path d="M70 180 C145 178 150 45 255 45 C350 45 360 155 450 155" fill="none" stroke="var(--bad)" stroke-width="5"/><path d="M70 180 C150 178 165 105 255 105 C340 105 365 155 450 155" fill="none" stroke="var(--good)" stroke-width="5"/><text x="268" y="42">without enzyme</text><text x="268" y="102">with enzyme</text><line x1="116" y1="178" x2="116" y2="50" stroke="var(--muted)" stroke-width="2"/><text x="125" y="78">larger barrier</text><line x1="205" y1="176" x2="205" y2="110" stroke="var(--muted)" stroke-width="2"/><text x="214" y="142">smaller barrier</text></svg>`},
+
+      {q:`<div class="visual-copy"><strong>Label the water molecule.</strong><br>Identify hydrogen, oxygen, the positive poles, and the negative pole.</div><svg class="diagram" viewBox="0 0 420 220" role="img" aria-label="Unlabeled bent water molecule"><title>Unlabeled water molecule</title><line x1="190" y1="105" x2="105" y2="165" stroke="currentColor" stroke-width="8" stroke-linecap="round"/><line x1="230" y1="105" x2="315" y2="165" stroke="currentColor" stroke-width="8" stroke-linecap="round"/><circle cx="210" cy="88" r="55" fill="var(--badBg)" stroke="currentColor" stroke-width="4"/><circle cx="88" cy="177" r="34" fill="var(--goodBg)" stroke="currentColor" stroke-width="4"/><circle cx="332" cy="177" r="34" fill="var(--goodBg)" stroke="currentColor" stroke-width="4"/><text x="198" y="94">?</text><text x="80" y="183">?</text><text x="324" y="183">?</text></svg>`, a:`<svg class="diagram" viewBox="0 0 420 235" role="img" aria-label="Water molecule with oxygen negative and hydrogens positive"><title>Labeled water molecule</title><line x1="190" y1="105" x2="105" y2="165" stroke="currentColor" stroke-width="8" stroke-linecap="round"/><line x1="230" y1="105" x2="315" y2="165" stroke="currentColor" stroke-width="8" stroke-linecap="round"/><circle cx="210" cy="88" r="55" fill="var(--badBg)" stroke="currentColor" stroke-width="4"/><circle cx="88" cy="177" r="34" fill="var(--goodBg)" stroke="currentColor" stroke-width="4"/><circle cx="332" cy="177" r="34" fill="var(--goodBg)" stroke="currentColor" stroke-width="4"/><text x="200" y="94">O</text><text x="78" y="183">H</text><text x="322" y="183">H</text><text x="194" y="25">δ−</text><text x="35" y="215">δ+</text><text x="353" y="215">δ+</text></svg><div class="visual-copy">Oxygen pulls shared electrons closer, making its end partially negative and the hydrogen ends partially positive.</div>`},
+
+      {q:`<div class="visual-copy"><strong>Draw sugar dissolving in coffee.</strong><br>Label the solution, solvent, and solute.</div><svg class="diagram" viewBox="0 0 480 240" role="img" aria-label="Unlabeled sugar cube above a cup of coffee"><title>Unlabeled sugar and coffee diagram</title><path d="M110 95 L370 95 L345 210 L135 210Z" fill="var(--surface)" stroke="currentColor" stroke-width="5"/><path d="M125 135 Q240 115 355 135 L340 197 L140 197Z" fill="var(--badBg)" stroke="var(--muted)" stroke-width="3"/><path d="M370 120 Q445 120 425 180 Q412 205 355 187" fill="none" stroke="currentColor" stroke-width="5"/><rect x="205" y="25" width="62" height="62" transform="rotate(12 236 56)" fill="var(--goodBg)" stroke="currentColor" stroke-width="4"/><path d="M230 90 L240 120" stroke="var(--muted)" stroke-width="3" stroke-dasharray="7 7"/><text x="230" y="60">?</text><text x="225" y="170">?</text></svg>`, a:`<svg class="diagram" viewBox="0 0 500 260" role="img" aria-label="Sugar is the solute coffee water is the solvent and sweetened coffee is the solution"><title>Labeled sugar and coffee diagram</title><path d="M110 95 L370 95 L345 210 L135 210Z" fill="var(--surface)" stroke="currentColor" stroke-width="5"/><path d="M125 135 Q240 115 355 135 L340 197 L140 197Z" fill="var(--badBg)" stroke="var(--muted)" stroke-width="3"/><path d="M370 120 Q445 120 425 180 Q412 205 355 187" fill="none" stroke="currentColor" stroke-width="5"/><rect x="205" y="25" width="62" height="62" transform="rotate(12 236 56)" fill="var(--goodBg)" stroke="currentColor" stroke-width="4"/><path d="M230 90 L240 120" stroke="var(--muted)" stroke-width="3" stroke-dasharray="7 7"/><text x="280" y="53">solute: sugar</text><text x="155" y="158">solvent: water in coffee</text><text x="145" y="235">solution: sweetened coffee</text></svg>`}
     ];
 
-    // Version 2 starts a fresh progress record while preserving future sessions.
     const storageKey = "biochemistry-flashcards-v2";
-    localStorage.removeItem("biochemistry-flashcards-v1");
     let results = {};
     try { results = JSON.parse(localStorage.getItem(storageKey)) || {}; } catch (_) {}
     let deck = cards.map((_, i) => i), index = 0, revealed = false;
@@ -192,7 +217,7 @@
       }
       index = (index + deck.length) % deck.length;
       const cardIndex = deck[index], item = cards[cardIndex], record = results[cardIndex];
-      revealed = false; $("question").textContent = item.q; $("answer").textContent = item.a;
+      revealed = false; $("question").innerHTML = item.q; $("answer").innerHTML = item.a;
       $("answer").hidden = true; $("sideLabel").textContent = "Question";
       $("hint").textContent = record ? `Last result: ${record.last === "right" ? "Right" : "Needs practice"}` : "Tap the card or press Space to reveal the answer";
       $("gradeActions").hidden = true; $("reveal").hidden = false; $("reveal").disabled = false;
