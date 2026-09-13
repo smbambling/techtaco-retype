@@ -16,10 +16,9 @@ links:
   - text: Blog
     link: /blog
     icon: comment
-  - text: GitHub
-    link: https://github.com/smbambling
-    icon: mark-github
-    target: blank
+  - text: Subscribe
+    icon: rss
+    link: https://techtaco.org/blog/feed.xml
 favicon: static/favicon.png
 footer:
   copyright: "&copy; Copyright . All rights reserved."
@@ -27,3 +26,10 @@ footer:
     - text: Disclaimer
       link: disclaimer.md
       icon: shield
+    - text: Contact Me
+      icon: mail
+      link: mailto:smbambling@gmail.com
+    - text: GitHub
+      link: https://github.com/smbambling
+      icon: mark-github
+      target: blank

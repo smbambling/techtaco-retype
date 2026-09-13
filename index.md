@@ -6,5 +6,4 @@ icon: home
 
 
 
-
-
+Random mumblings and musing of interesting technologies.
