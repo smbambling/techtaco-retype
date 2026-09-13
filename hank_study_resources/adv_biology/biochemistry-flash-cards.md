@@ -1,3 +1,5 @@
+Check out the raw [HTML Dashboard](/biochemistry-flash-cards.html).
+
 <!doctype html>
 <html lang="en">
 <head>

@@ -22,7 +22,7 @@
 ### Advanced Biology Resources
 
 - [Advanced Biology Resources](https://techtaco.org/hank_study_resources/adv_biology/index.md): [Flash Cards](biochemistry-flash-cards.md}
-- [Flash Cards](https://techtaco.org/hank_study_resources/adv_biology/biochemistry-flash-cards.md): <!doctype html>
+- [Flash Cards](https://techtaco.org/hank_study_resources/adv_biology/biochemistry-flash-cards.md): Check out the raw HTML Dashboard.
 
 ## Blog
 
