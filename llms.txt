@@ -1,0 +1,21 @@
+﻿# Welcome
+
+> Random mumblings and musing of interesting technologies.
+
+- [Welcome](https://techtaco.org/index.md): Welcome
+- [Docs](https://techtaco.org/docs/index.md)
+- [Disclaimer](https://techtaco.org/disclaimer.md): TechTaco.ORG Terms And Conditions Of Use
+
+## Docs
+
+### Snippets
+
+- [Snippets](https://techtaco.org/docs/snippets/index.md): Collection of useful command line snippets:
+- [Awk](https://techtaco.org/docs/snippets/awk.md)
+- [Bash Parameter Subsitition](https://techtaco.org/docs/snippets/bash_parameter_substitution.md): Variable
+- [Bash](https://techtaco.org/docs/snippets/bash.md): In a directory where you suspect there might be a lot of inode usage run the following
+- [Sed](https://techtaco.org/docs/snippets/sed.md)
+
+## Blog
+
+- [Entry 1](https://techtaco.org/blog/entry1.md): This is a test blog entry about some things and stuff:wq
