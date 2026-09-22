@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grade 6 Science Vocabulary Flash Cards</title>
+  <meta name="description" content="Interactive Grade 6 Science vocabulary flash cards for Units 1–4 with unit filtering and right, wrong, and needs-practice tracking.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233157d5'/%3E%3Cpath d='M18 15h22a8 8 0 0 1 8 8v26H26a8 8 0 0 0-8 0V15zm8 8h14v5H26v-5zm0 10h14v5H26v-5z' fill='white'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fb; --surface: #fff; --text: #172033; --muted: #667085;
+      --border: #d6dce8; --accent: #3157d5; --accentText: #fff;
+      --good: #147a4b; --goodBg: #eaf8f0; --bad: #b42318; --badBg: #fff0ee;
+      --shadow: 0 12px 35px rgba(31, 42, 68, .12);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #101522; --surface: #1a2130; --text: #eef2f8; --muted: #aab4c7;
+        --border: #374154; --accent: #7d9aff; --accentText: #101522;
+        --good: #68d9a1; --goodBg: #153529; --bad: #ff9188; --badBg: #3d211f;
+        --shadow: 0 12px 35px rgba(0, 0, 0, .3);
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; background: var(--bg); color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main { width: min(760px, 100%); margin: 0 auto; padding: 24px 16px 40px; }
+    h1 { margin: 0; font-size: clamp(1.55rem, 5vw, 2.1rem); }
+    .subtitle { margin: 6px 0 20px; color: var(--muted); }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+    .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; }
+    .stat strong { display: block; font-size: 1.2rem; }
+    .stat span { color: var(--muted); font-size: .82rem; }
+    .toolbar, .actions, .nav { display: flex; flex-wrap: wrap; gap: 10px; }
+    .toolbar { margin-bottom: 14px; }
+    button, select {
+      min-height: 44px; border: 1px solid var(--border); border-radius: 10px;
+      background: var(--surface); color: var(--text); padding: 10px 14px; font: inherit;
+    }
+    button { cursor: pointer; font-weight: 650; }
+    button:hover { filter: brightness(.97); }
+    button:focus-visible, select:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 40%, transparent); outline-offset: 2px; }
+    .primary { background: var(--accent); color: var(--accentText); border-color: var(--accent); }
+    .card {
+      min-height: 330px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 18px; box-shadow: var(--shadow); padding: clamp(22px, 5vw, 40px);
+      display: flex; flex-direction: column; justify-content: center; text-align: center;
+      cursor: pointer; user-select: none;
+    }
+    .label { color: var(--accent); font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .question { font-size: clamp(1.2rem, 4.5vw, 1.65rem); line-height: 1.4; margin: 16px 0; }
+    .answer { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 22px; font-size: 1.1rem; line-height: 1.55; }
+    .diagram { display: block; width: min(100%, 460px); height: auto; margin: 16px auto 0; color: var(--text); }
+    .diagram text { fill: var(--text); font: 600 14px system-ui, sans-serif; }
+    .diagram .muted-line { stroke: var(--muted); }
+    .diagram .accent-line { stroke: var(--accent); }
+    .diagram .accent-fill { fill: var(--accent); }
+    .diagram .surface-fill { fill: var(--surface); }
+    .diagram .good-fill { fill: var(--goodBg); }
+    .diagram .bad-fill { fill: var(--badBg); }
+    .visual-copy { font-size: 1rem; line-height: 1.45; }
+    .answer-list { text-align: left; width: min(100%, 520px); margin: 0 auto; }
+    .hint { color: var(--muted); font-size: .88rem; margin-top: 18px; }
+    .actions { justify-content: center; margin: 16px 0; }
+    .correct { color: var(--good); background: var(--goodBg); border-color: var(--good); }
+    .wrong { color: var(--bad); background: var(--badBg); border-color: var(--bad); }
+    .nav { justify-content: space-between; }
+    .nav button { flex: 1; }
+    .progress { height: 8px; background: var(--border); border-radius: 999px; overflow: hidden; margin: 16px 0 8px; }
+    .progress > div { height: 100%; background: var(--accent); transition: width .2s ease; }
+    .status { text-align: center; color: var(--muted); font-size: .9rem; min-height: 1.4em; }
+    details { margin-top: 22px; color: var(--muted); }
+    details button { margin-top: 10px; color: var(--bad); }
+    [hidden] { display: none !important; }
+    @media (max-width: 430px) {
+      main { padding-top: 16px; }
+      .card { min-height: 300px; }
+      .toolbar > * { flex: 1 1 45%; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Grade 6 Science Vocabulary</h1>
+    <p class="subtitle">Study the Science 6 vocabulary by unit, reveal each SOL-aligned definition, then mark how you did.</p>
+
+    <section class="stats" aria-label="Study statistics">
+      <div class="stat"><strong id="rightCount">0</strong><span>Right</span></div>
+      <div class="stat"><strong id="wrongCount">0</strong><span>Wrong</span></div>
+      <div class="stat"><strong id="mastery">—</strong><span>Accuracy</span></div>
+    </section>
+
+    <div class="toolbar">
+      <label>
+        <span class="label">Unit</span><br>
+        <select id="unit" aria-label="Choose science unit">
+          <option value="all">All units</option>
+          <option value="Unit 1: Solar System">Unit 1 · Solar System</option>
+          <option value="Unit 2: Earth-Moon-Sun Relationships">Unit 2 · Earth-Moon-Sun Relationships</option>
+          <option value="Unit 3: Energy &amp; Energy Transformations">Unit 3 · Energy &amp; Energy Transformations</option>
+          <option value="Unit 4: Matter">Unit 4 · Matter</option>
+        </select>
+      </label>
+      <label>
+        <span class="label">Study set</span><br>
+        <select id="mode" aria-label="Choose study set">
+          <option value="all">All cards</option>
+          <option value="missed">Needs practice</option>
+          <option value="unseen">Not answered yet</option>
+        </select>
+      </label>
+      <button id="shuffle" type="button">Shuffle cards</button>
+      <button id="reset" type="button">Reset stats</button>
+    </div>
+
+    <div class="progress" role="progressbar" aria-label="Deck progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progressBar"></div></div>
+    <div id="position" class="status" aria-live="polite"></div>
+
+    <article id="card" class="card" role="button" aria-label="Vocabulary flash card. Activate to reveal the definition">
+      <div class="label" id="sideLabel">Question</div>
+      <div id="question" class="question"></div>
+      <div id="answer" class="answer" hidden></div>
+      <div id="hint" class="hint">Tap the card or press Space to reveal the definition</div>
+    </article>
+
+    <div id="gradeActions" class="actions" hidden>
+      <button id="wrong" class="wrong" type="button">✕ I got it wrong</button>
+      <button id="correct" class="correct" type="button">✓ I got it right</button>
+    </div>
+    <div class="nav">
+      <button id="previous" type="button">← Previous</button>
+      <button id="reveal" class="primary" type="button">Show definition</button>
+      <button id="next" type="button">Next →</button>
+    </div>
+
+    <details>
+      <summary>Keyboard shortcuts and progress</summary>
+      <p><strong>Space:</strong> reveal answer · <strong>1:</strong> wrong · <strong>2:</strong> right · <strong>←/→:</strong> previous/next.</p>
+      <p>Your right/wrong history is saved automatically in this browser and remains after a page refresh. Use “Needs practice” to study cards whose latest result was wrong.</p>
+    </details>
+  </main>
+
+  <script>
+    const cards = [
+      {unit:"Unit 1: Solar System",q:"revolution",a:"The motion of one object around an external point or another object; Earth completes a revolution around the sun in about 365 days."},
+      {unit:"Unit 1: Solar System",q:"asteroid",a:"A small rocky object that is part of the solar system."},
+      {unit:"Unit 1: Solar System",q:"celestial",a:"Relating to objects in space, such as the sun, moon, planets, asteroids, and comets."},
+      {unit:"Unit 1: Solar System",q:"comet",a:"A small solar-system body composed of material that can include ice, dust, and rock."},
+      {unit:"Unit 1: Solar System",q:"dwarf planet",a:"A solar-system body that orbits the sun and is smaller than the recognized planets."},
+      {unit:"Unit 1: Solar System",q:"gas giant",a:"A very large outer planet composed primarily of gases rather than rocky material."},
+      {unit:"Unit 1: Solar System",q:"gravity",a:"An attractive force that acts between objects because they have mass; greater mass produces greater gravitational force, while greater distance decreases it."},
+      {unit:"Unit 1: Solar System",q:"manned spacecraft",a:"A spacecraft designed to carry people for exploration or observation."},
+      {unit:"Unit 1: Solar System",q:"meteor",a:"The visible phenomenon produced when space material enters Earth's atmosphere."},
+      {unit:"Unit 1: Solar System",q:"meteorite",a:"Space material that survives passage through the atmosphere and reaches Earth's surface."},
+      {unit:"Unit 1: Solar System",q:"orbit",a:"The path an object follows as it revolves around another object; gravity keeps planets in orbit around the sun."},
+      {unit:"Unit 1: Solar System",q:"planet",a:"A major body in the solar system that orbits the sun; planets differ greatly in size, composition, and distance from the sun."},
+      {unit:"Unit 1: Solar System",q:"robotic spacecraft",a:"An uncrewed spacecraft used to collect observations and data about space."},
+      {unit:"Unit 1: Solar System",q:"solar system",a:"The sun and the objects associated with it, including Earth, the moon, other planets and their moons, dwarf planets, meteors, asteroids, and comets."},
+      {unit:"Unit 1: Solar System",q:"telescope",a:"A technology used to observe distant objects; its invention provided observations that changed scientific understanding of the solar system."},
+      {unit:"Unit 1: Solar System",q:"terrestrial planet",a:"One of the comparatively small, rocky inner planets of the solar system."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"phase",a:"A predictable change in the moon's apparent illuminated shape as viewed from Earth, caused by the moon's orbital motion and changing positions relative to Earth and the sun."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"unique",a:"Having properties or characteristics that distinguish something; Earth has properties that enable it to support life."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"atmosphere",a:"Earth's protective layer of gases, predominantly nitrogen and oxygen, that helps shield the surface from harmful solar radiation."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"axis",a:"An imaginary line around which an object rotates; Earth rotates on its axis."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"axial tilt",a:"The tilt of Earth's axis; together with Earth's curvature and revolution, it changes the angle at which sunlight strikes Earth and helps cause seasons."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"curvature",a:"The curved shape of Earth's surface, which affects the angle at which sunlight reaches different locations."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"eclipse",a:"An event that occurs when the sun, Earth, and moon align so that one object casts a shadow on another."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"hemisphere",a:"One half of Earth; the two hemispheres receive different patterns of sunlight during Earth's annual revolution."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"high tide",a:"A regularly occurring higher ocean-water level produced by the gravitational relationship among Earth, the moon, and the sun."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"low tide",a:"A regularly occurring lower ocean-water level produced by the gravitational relationship among Earth, the moon, and the sun."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"magnetic field",a:"A property of Earth that, along with the atmosphere, helps shield Earth's surface from harmful solar radiation."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"proximity",a:"Closeness; Earth's proximity to the sun and moon influences Earth systems and helps enable life."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"rotation",a:"The spinning of an object around an axis; Earth's rotation causes day and night."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"seasons",a:"Predictable yearly changes caused by Earth's axial tilt, the curvature of Earth's surface, and the angle of sunlight during Earth's revolution around the sun."},
+      {unit:"Unit 2: Earth-Moon-Sun Relationships",q:"solar radiation",a:"Energy from the sun, including infrared, visible, and ultraviolet radiation."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"electricity",a:"A secondary source of energy used to store, move, and deliver energy in a usable form."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"energy",a:"The quantity transferred and transformed as Earth processes and systems operate; much of the energy driving Earth processes is derived from the sun."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"heat",a:"Thermal energy transferred because of differences in temperature."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"reflected",a:"Redirected rather than absorbed; some incoming solar energy is reflected by Earth's surface and atmosphere."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"transform",a:"To change energy from one form into another; energy can be transformed among thermal, radiant, mechanical, chemical, and electrical forms."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"chemical energy",a:"Energy stored in chemical substances that can be transformed into other forms of energy."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"conduction",a:"Transfer of thermal energy through direct contact."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"convection",a:"Transfer of thermal energy through the movement of air or water; warmer, less-dense material rises while cooler, denser material descends."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"density",a:"The amount of matter in a given volume; heating air or water can decrease density, while cooling can increase density."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"Earth's energy budget",a:"The tracking of energy entering and leaving Earth's climate system, where that energy goes, and whether incoming and outgoing energy are balanced."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"electrical energy",a:"A form of energy that can be produced through transformations of thermal, radiant, mechanical, or chemical energy."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"energy resources",a:"Sources from which usable energy is obtained; most energy sources on Earth are directly or indirectly related to solar radiation."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"fossil fuels",a:"Energy resources formed from decomposed organisms; their stored energy ultimately traces back to solar energy captured by living things."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"greenhouse gases",a:"Atmospheric gases that reduce the amount of energy that can leave Earth's atmosphere, contributing to the greenhouse effect."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"heat transfer",a:"The movement of thermal energy from one place to another by radiation, conduction, or convection."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"infrared",a:"A type of solar radiation that contributes to heating Earth's surface."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"mechanical energy",a:"A form of energy associated with motion that can result from energy transformations."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"radiant energy",a:"Energy carried by radiation; sunlight is radiant energy that can be transformed into other forms."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"radiation",a:"Transfer of thermal energy without direct contact, such as energy from the sun reaching Earth."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"solar energy",a:"Energy from the sun that drives many Earth processes and is the source of most energy on Earth."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"thermal energy",a:"Energy associated with the motion of particles; it can be transferred by radiation, conduction, and convection."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"ultraviolet",a:"A type of solar radiation that is part of the energy Earth receives from the sun."},
+      {unit:"Unit 3: Energy & Energy Transformations",q:"visible light",a:"The visible portion of solar radiation that reaches Earth."},
+      {unit:"Unit 4: Matter",q:"charge",a:"An electrical property of subatomic particles that is involved in the forces holding atoms together in chemical bonds."},
+      {unit:"Unit 4: Matter",q:"conserve",a:"To remain unchanged in total amount; matter is conserved because atoms are conserved during chemical and physical processes."},
+      {unit:"Unit 4: Matter",q:"equation",a:"A symbolic representation; a chemical equation models a chemical change by showing how elements are rearranged."},
+      {unit:"Unit 4: Matter",q:"product",a:"A new substance formed during a chemical process; products can have different properties from the original reactants."},
+      {unit:"Unit 4: Matter",q:"symbol",a:"A representation used to identify an element; each element has a unique chemical symbol."},
+      {unit:"Unit 4: Matter",q:"atom",a:"The basic building block of matter, composed of subatomic particles including protons, neutrons, and electrons."},
+      {unit:"Unit 4: Matter",q:"chemical bond",a:"A force that holds atoms together to form new substances; chemical bonds are formed with electrons."},
+      {unit:"Unit 4: Matter",q:"chemical change",a:"A process in which atoms in original substances are rearranged to form different substances."},
+      {unit:"Unit 4: Matter",q:"chemical formula",a:"A representation of a compound using element symbols and subscripts to show the identity and number of atoms present."},
+      {unit:"Unit 4: Matter",q:"chemical reaction",a:"A process in which reactant atoms are regrouped into products while the identity and total number of atoms are conserved."},
+      {unit:"Unit 4: Matter",q:"compound",a:"A substance formed when two or more atoms of different elements combine."},
+      {unit:"Unit 4: Matter",q:"electron",a:"A subatomic particle found outside the nucleus; electrons are involved in chemical bonding."},
+      {unit:"Unit 4: Matter",q:"electron cloud",a:"The region surrounding an atom's nucleus where electrons are located."},
+      {unit:"Unit 4: Matter",q:"element",a:"A form of matter made of one type of atom and identified by its number of protons."},
+      {unit:"Unit 4: Matter",q:"molecule",a:"A group of atoms joined together; formulas can represent the atoms present in molecules or compounds."},
+      {unit:"Unit 4: Matter",q:"neutron",a:"A subatomic particle located in the nucleus of an atom; atoms of the same element may vary in their number of neutrons."},
+      {unit:"Unit 4: Matter",q:"nucleus",a:"The central part of an atom containing protons and neutrons."},
+      {unit:"Unit 4: Matter",q:"proton",a:"A subatomic particle in the nucleus; the number of protons identifies an element."},
+      {unit:"Unit 4: Matter",q:"reactant",a:"An original substance in a chemical process whose atoms are rearranged to form products."},
+      {unit:"Unit 4: Matter",q:"subscript",a:"A small number written to the right of an element symbol in a chemical formula to indicate the number of atoms of that element when the number is greater than one."}
+    ];
+
+    const storageKey = "grade6-science-vocab-units1-4-v1";
+    let results = {};
+    try { results = JSON.parse(localStorage.getItem(storageKey)) || {}; } catch (_) {}
+    let deck = cards.map((_, i) => i), index = 0, revealed = false;
+    const $ = id => document.getElementById(id);
+
+    function filteredDeck() {
+      const mode = $("mode").value;
+      const unit = $("unit").value;
+      return cards.map((_,i)=>i).filter(i => {
+        if (unit !== "all" && cards[i].unit !== unit) return false;
+        if (mode === "missed") return results[i]?.last === "wrong";
+        if (mode === "unseen") return !results[i];
+        return true;
+      });
+    }
+
+    function save() { localStorage.setItem(storageKey, JSON.stringify(results)); }
+    function updateStats() {
+      const right = Object.values(results).reduce((n,r)=>n+(r.right||0),0);
+      const wrong = Object.values(results).reduce((n,r)=>n+(r.wrong||0),0);
+      $("rightCount").textContent = right;
+      $("wrongCount").textContent = wrong;
+      $("mastery").textContent = right + wrong ? Math.round(right/(right+wrong)*100)+"%" : "—";
+    }
+    function render() {
+      if (!deck.length) {
+        $("question").textContent = $("mode").value === "missed" ? "Nothing needs practice yet." : "You have answered every card.";
+        $("answer").hidden = true; $("hint").textContent = "Choose another study set to continue.";
+        $("gradeActions").hidden = true; $("reveal").disabled = true;
+        $("previous").disabled = true; $("next").disabled = true;
+        $("position").textContent = "0 cards"; $("progressBar").style.width = "0%";
+        return;
+      }
+      index = (index + deck.length) % deck.length;
+      const cardIndex = deck[index], item = cards[cardIndex], record = results[cardIndex];
+      revealed = false; $("question").innerHTML = item.q; $("answer").innerHTML = item.a;
+      $("answer").hidden = true; $("sideLabel").textContent = item.unit;
+      $("hint").textContent = record ? `Last result: ${record.last === "right" ? "Right" : "Needs practice"}` : "Tap the card or press Space to reveal the definition";
+      $("gradeActions").hidden = true; $("reveal").hidden = false; $("reveal").disabled = false;
+      $("previous").disabled = false; $("next").disabled = false;
+      $("position").textContent = `Card ${index+1} of ${deck.length}`;
+      const pct = Math.round((index+1)/deck.length*100);
+      $("progressBar").style.width = pct+"%";
+      document.querySelector(".progress").setAttribute("aria-valuenow", pct);
+    }
+    function reveal() {
+      if (!deck.length || revealed) return;
+      revealed = true; $("answer").hidden = false; $("sideLabel").textContent = "Definition";
+      $("hint").textContent = "How did you do?"; $("gradeActions").hidden = false; $("reveal").hidden = true;
+    }
+    function grade(mark) {
+      if (!deck.length || !revealed) return;
+      const cardIndex = deck[index]; results[cardIndex] ||= {right:0, wrong:0};
+      results[cardIndex][mark]++; results[cardIndex].last = mark; save(); updateStats();
+      if ($("mode").value !== "all") {
+        const current = cardIndex; deck = filteredDeck();
+        const located = deck.indexOf(current); index = located >= 0 ? located + 1 : Math.min(index, deck.length-1);
+      } else index++;
+      render();
+    }
+    function move(amount) { if (deck.length) { index += amount; render(); } }
+    $("card").addEventListener("click", reveal); $("reveal").addEventListener("click", reveal);
+    $("correct").addEventListener("click", ()=>grade("right")); $("wrong").addEventListener("click", ()=>grade("wrong"));
+    $("next").addEventListener("click", ()=>move(1)); $("previous").addEventListener("click", ()=>move(-1));
+    $("mode").addEventListener("change", ()=>{ deck=filteredDeck(); index=0; render(); });
+    $("unit").addEventListener("change", ()=>{ deck=filteredDeck(); index=0; render(); });
+    $("shuffle").addEventListener("click", ()=>{ for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];} index=0; render(); });
+    $("reset").addEventListener("click", ()=>{ if(confirm("Reset all right/wrong history?")){results={};save();deck=filteredDeck();index=0;updateStats();render();} });
+    document.addEventListener("keydown", e=>{
+      if (["SELECT","BUTTON"].includes(document.activeElement.tagName)) return;
+      if (e.code === "Space") { e.preventDefault(); reveal(); }
+      else if (e.key === "1") grade("wrong"); else if (e.key === "2") grade("right");
+      else if (e.key === "ArrowLeft") move(-1); else if (e.key === "ArrowRight") move(1);
+    });
+    updateStats(); render();
+  </script>
+</body>
+</html>
