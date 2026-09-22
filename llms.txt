@@ -6,7 +6,7 @@
 - [Docs](https://techtaco.org/docs/index.md)
 - [Disclaimer](https://techtaco.org/disclaimer.md): TechTaco.ORG Terms And Conditions Of Use
 - [Hanks Study Resources](https://techtaco.org/hank_study_resources/index.md): Human Evolution Flash Cards
-- [Willa Study Resources](https://techtaco.org/willa_study_resources/index.md): Grade 6 United States History Vocabulary Flash Cards
+- [Willa Study Resources](https://techtaco.org/willa_study_resources/index.md): Grade 6 Science Vocabulary Flash Cards
 
 ## Docs
 
