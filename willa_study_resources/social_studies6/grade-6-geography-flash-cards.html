@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grade 6 Geography Flash Cards</title>
+<style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#172033;--muted:#667085;--border:#d8dee9;--accent:#2563eb;--good:#15803d;--bad:#b42318;--soft:#eef4ff;--shadow:0 12px 30px rgba(15,23,42,.10)}
+@media(prefers-color-scheme:dark){:root{--bg:#111827;--panel:#1f2937;--text:#f3f4f6;--muted:#aab3c2;--border:#3b4555;--accent:#7aa2ff;--good:#62d68a;--bad:#ff8b82;--soft:#25344f;--shadow:0 12px 30px rgba(0,0,0,.28)}}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{width:min(760px,calc(100% - 28px));margin:34px auto 48px} h1{font-size:clamp(1.65rem,5vw,2.35rem);margin:0 0 4px;text-align:center}
+.subtitle{text-align:center;color:var(--muted);margin:0 0 22px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat,.toolbar,.card,.actions,.nav{background:var(--panel);border:1px solid var(--border);border-radius:16px}
+.stat{padding:12px;text-align:center} .stat strong{display:block;font-size:1.25rem} .stat span{font-size:.8rem;color:var(--muted)}
+.toolbar{padding:13px;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+select,button{font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+button{cursor:pointer} button:hover{border-color:var(--accent)} .wide{grid-column:1/-1}
+.progress{height:8px;background:var(--border);border-radius:99px;overflow:hidden;margin:15px 2px 7px} .progress>div{height:100%;background:var(--accent);width:0}
+.status{display:flex;justify-content:space-between;color:var(--muted);font-size:.86rem;margin:0 2px 10px;gap:12px}
+.card{min-height:315px;padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:var(--shadow);cursor:pointer;user-select:none}
+.kicker{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:18px}
+.question{font-size:clamp(1.35rem,4.5vw,2rem);font-weight:750;line-height:1.3}
+.answer{font-size:clamp(1.15rem,4vw,1.55rem);line-height:1.5;margin-top:18px;display:none}
+.hint{color:var(--muted);font-size:.88rem;margin-top:24px} .revealed .answer{display:block} .revealed .hint{display:none}
+.actions{display:none;grid-template-columns:1fr 1fr;gap:10px;padding:12px;margin-top:14px} .actions.show{display:grid}
+.wrong{border-color:var(--bad);color:var(--bad)} .right{border-color:var(--good);color:var(--good)}
+.nav{display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:10px;padding:12px;margin-top:14px}
+#empty{display:none;text-align:center;padding:50px 20px;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:16px}
+.footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:16px;line-height:1.5}
+@media(max-width:520px){main{width:min(100% - 18px,760px);margin-top:18px}.toolbar{grid-template-columns:1fr}.wide{grid-column:auto}.card{min-height:340px;padding:24px 20px}.nav{grid-template-columns:1fr 1fr}#revealBtn{grid-column:1/-1;grid-row:1}}
+</style>
+</head>
+<body>
+<main>
+<h1>Grade 6 Geography Flash Cards</h1>
+<p class="subtitle">Geography basics, North American regions, and land &amp; water features</p>
+
+<div class="stats">
+  <div class="stat"><strong id="rightCount">0</strong><span>Right</span></div>
+  <div class="stat"><strong id="wrongCount">0</strong><span>Wrong</span></div>
+  <div class="stat"><strong id="accuracy">—</strong><span>Accuracy</span></div>
+</div>
+
+<div class="toolbar">
+  <select id="unitSelect" aria-label="Topic"></select>
+  <select id="modeSelect" aria-label="Study mode">
+    <option value="all">All cards</option>
+    <option value="practice">Needs practice</option>
+    <option value="unanswered">Not answered yet</option>
+  </select>
+  <button id="shuffleBtn">Shuffle cards</button>
+  <button id="resetBtn">Reset stats</button>
+</div>
+
+<div class="progress"><div id="progressBar"></div></div>
+<div class="status"><span id="statusText"></span><span id="positionText"></span></div>
+
+<div id="empty">No cards match this study mode yet.</div>
+<div id="card" class="card" tabindex="0" role="button" aria-label="Flash card">
+  <div class="kicker" id="unitLabel"></div>
+  <div class="question" id="question"></div>
+  <div class="answer" id="answer"></div>
+  <div class="hint">Click/tap the card or press Space to reveal the answer.</div>
+</div>
+
+<div id="actions" class="actions">
+  <button id="wrongBtn" class="wrong">I got it wrong <strong>(1)</strong></button>
+  <button id="rightBtn" class="right">I got it right <strong>(2)</strong></button>
+</div>
+
+<div class="nav">
+  <button id="prevBtn">← Previous</button>
+  <button id="revealBtn">Reveal answer</button>
+  <button id="nextBtn">Next →</button>
+</div>
+<div class="footer">Keyboard: Space = reveal · 1 = wrong · 2 = right · ← / → = previous / next<br>Progress is saved in this browser.</div>
+</main>
+
+<script>
+const CARDS = [{"unit": "Geography Basics", "front": "What is geography?", "back": "The study of Earth’s land, water, climate, and how people interact with their environment."}, {"unit": "Geography Basics", "front": "What are people who study geography called?", "back": "Geographers."}, {"unit": "Geography Basics", "front": "What physical features are geographers interested in?", "back": "Earth’s physical features, such as mountains, deserts, rivers, and oceans."}, {"unit": "Geography Basics", "front": "What else do geographers study besides physical features?", "back": "The ways that people affect and are affected by the natural world."}, {"unit": "Geography Basics", "front": "What is a hemisphere?", "back": "Half of the Earth. North America is in the Northern and mostly in the Western Hemisphere."}, {"unit": "Geography Basics", "front": "What divides Earth into the Northern and Southern hemispheres?", "back": "The equator."}, {"unit": "Geography Basics", "front": "What divides Earth into the Eastern and Western hemispheres?", "back": "The prime meridian."}, {"unit": "Geography Basics", "front": "What is a continent?", "back": "A large area of land on Earth. North America is one of seven continents."}, {"unit": "Geography Basics", "front": "What is climate?", "back": "Patterns of weather in a specific place over a period of time."}, {"unit": "Geography Basics", "front": "What is a region?", "back": "An area that shares common features like landforms, climate, or culture."}, {"unit": "Geographic Regions", "front": "What are the eight geographic regions of North America?", "back": "Coastal Range; Basin and Range; Rocky Mountains; Great Plains; Interior Lowlands; Canadian Shield; Appalachian Mountains/Highlands; Coastal Plains."}, {"unit": "Geographic Regions", "front": "What mnemonic helps remember the eight geographic regions?", "back": "Can’t Beat Real Gorillas In Checkers And Chess."}, {"unit": "Geographic Regions", "front": "In the mnemonic “Can’t Beat Real Gorillas In Checkers And Chess,” what does the first C stand for?", "back": "Coastal Range."}, {"unit": "Geographic Regions", "front": "In the geographic regions mnemonic, what does B stand for?", "back": "Basin and Range."}, {"unit": "Geographic Regions", "front": "In the geographic regions mnemonic, what does R stand for?", "back": "Rocky Mountains."}, {"unit": "Geographic Regions", "front": "In the geographic regions mnemonic, what does G stand for?", "back": "Great Plains."}, {"unit": "Geographic Regions", "front": "In the geographic regions mnemonic, what does I stand for?", "back": "Interior Lowlands."}, {"unit": "Geographic Regions", "front": "In the geographic regions mnemonic, what does the second C stand for?", "back": "Canadian Shield."}, {"unit": "Geographic Regions", "front": "In the geographic regions mnemonic, what does A stand for?", "back": "Appalachian Mountains/Highlands."}, {"unit": "Geographic Regions", "front": "In the geographic regions mnemonic, what does the final C stand for?", "back": "Coastal Plains."}, {"unit": "Coastal Range", "front": "Where is the Coastal Range located?", "back": "Along the Pacific Coast, stretching from California to Canada."}, {"unit": "Coastal Range", "front": "What landforms characterize the Coastal Range?", "back": "Rugged mountain ranges, low valleys, and rich soil. It includes the Sierra Nevada and the Cascades."}, {"unit": "Coastal Range", "front": "What is the climate of the Coastal Range?", "back": "The Pacific Northwest is cool and wet, with lots of fog, mist, and rain, and overall mild temperatures year-round."}, {"unit": "Coastal Range", "front": "What major body of water borders the Coastal Range?", "back": "The Pacific Ocean."}, {"unit": "Basin and Range", "front": "Where is the Basin and Range region located?", "back": "West of the Rocky Mountains and east of the Coastal Range."}, {"unit": "Basin and Range", "front": "What landforms characterize the Basin and Range region?", "back": "Varying elevations with isolated mountain ranges, wide desert basins, mesas (flat-top hills), and Death Valley, the lowest point in North America."}, {"unit": "Basin and Range", "front": "What is the climate of the Basin and Range region?", "back": "A hot, dry desert climate with very little rain and extreme heat."}, {"unit": "Basin and Range", "front": "What important water fact should you know about the Basin and Range?", "back": "Water is scarce, but the Colorado River provides water to the area."}, {"unit": "Rocky Mountains", "front": "Where are the Rocky Mountains located?", "back": "West of the Great Plains and east of the Basin and Range."}, {"unit": "Rocky Mountains", "front": "What landforms characterize the Rocky Mountains?", "back": "Rugged mountains stretching from Alaska almost to Mexico, with high elevations."}, {"unit": "Rocky Mountains", "front": "What is the Continental Divide?", "back": "A feature in the Rocky Mountains that determines the directional flow of rivers."}, {"unit": "Rocky Mountains", "front": "What is the climate of the Rocky Mountains?", "back": "Cold and snowy, with some areas getting over 200 inches of snow each year."}, {"unit": "Rocky Mountains", "front": "How does snow affect water in the Rocky Mountains?", "back": "Snowmelt fills rivers and lakes, providing water to many parts of the country."}, {"unit": "Great Plains", "front": "Where are the Great Plains located?", "back": "West of the Interior Lowlands and east of the Rocky Mountains."}, {"unit": "Great Plains", "front": "What landforms characterize the Great Plains?", "back": "Flat lands that gradually increase in elevation westward and grasslands."}, {"unit": "Great Plains", "front": "Why are the Great Plains known as “America’s Breadbasket”?", "back": "Because of the fertile soil that grows crops well."}, {"unit": "Great Plains", "front": "What is the climate of the Great Plains?", "back": "Dry, with only about 10–20 inches of rain or snow each year, which is why few trees grow there."}, {"unit": "Great Plains", "front": "What major river is associated with the Great Plains?", "back": "The Missouri River. The region has many rivers."}, {"unit": "Interior Lowlands", "front": "Where are the Interior Lowlands located?", "back": "West of the Appalachian Mountains and east of the Great Plains."}, {"unit": "Interior Lowlands", "front": "What landforms characterize the Interior Lowlands?", "back": "Rolling flatlands with many rivers, broad river valleys, and grassy hills."}, {"unit": "Interior Lowlands", "front": "What is the climate of the Interior Lowlands?", "back": "Unpredictable, with hot summers, cold winters, and sudden storms. Dangerous weather can include tornadoes, hail, and blizzards."}, {"unit": "Interior Lowlands", "front": "What major river is associated with the Interior Lowlands?", "back": "The Mississippi River. The region has many rivers."}, {"unit": "Canadian Shield", "front": "Where is the Canadian Shield located?", "back": "Wrapped around Hudson Bay in a horseshoe shape."}, {"unit": "Canadian Shield", "front": "What landforms characterize the Canadian Shield?", "back": "A rocky, flat region shaped by glaciers, with hills worn by erosion, thin soil, and very few trees."}, {"unit": "Canadian Shield", "front": "What is the climate of the Canadian Shield?", "back": "Cold."}, {"unit": "Canadian Shield", "front": "What water features characterize the Canadian Shield?", "back": "Hundreds of lakes carved by glaciers and swampy areas."}, {"unit": "Appalachian Mountains/Highlands", "front": "Where are the Appalachian Mountains/Highlands located?", "back": "West of the Coastal Plain, extending from eastern Canada to western Alabama; includes the Piedmont."}, {"unit": "Appalachian Mountains/Highlands", "front": "What landforms characterize the Appalachian Mountains/Highlands?", "back": "Old, eroded mountains—the oldest mountain range in North America."}, {"unit": "Appalachian Mountains/Highlands", "front": "What is the climate of the Appalachian Mountains/Highlands?", "back": "Mild and wet."}, {"unit": "Appalachian Mountains/Highlands", "front": "What water features are associated with the Appalachian Mountains/Highlands?", "back": "Rivers and streams."}, {"unit": "Coastal Plains", "front": "Where are the Coastal Plains located?", "back": "Along the Atlantic Ocean and Gulf of Mexico."}, {"unit": "Coastal Plains", "front": "What landforms characterize the Coastal Plains?", "back": "Broad lowlands with many excellent harbors, fertile soil, flat plains, sandy beaches, and forests."}, {"unit": "Coastal Plains", "front": "What is the climate of the Coastal Plains?", "back": "Mild and humid."}, {"unit": "Coastal Plains", "front": "What bodies of water are associated with the Coastal Plains?", "back": "The Atlantic Ocean, Gulf of Mexico, and many rivers."}, {"unit": "Land & Water Features", "front": "What is a lake?", "back": "A large body of water surrounded by land."}, {"unit": "Land & Water Features", "front": "How does the slide deck define a river?", "back": "A body of water with land on all sides; a large inland body of water."}, {"unit": "Land & Water Features", "front": "What is a tributary?", "back": "A river or stream flowing into a larger river or lake."}, {"unit": "Land & Water Features", "front": "What are gulfs and bays?", "back": "A body of water connected to an ocean or lake, formed by an indentation of the shoreline."}, {"unit": "Land & Water Features", "front": "What is a mountain?", "back": "A large steep hill."}, {"unit": "Land & Water Features", "front": "What is a hill?", "back": "A naturally raised area of land, not as high or craggy as a mountain."}, {"unit": "Land & Water Features", "front": "What is a plain?", "back": "A large area of flat land with few trees."}, {"unit": "Land & Water Features", "front": "What is a plateau?", "back": "An area of relatively level high ground."}, {"unit": "Land & Water Features", "front": "What is an island?", "back": "A piece of land surrounded by water."}, {"unit": "Land & Water Features", "front": "What is a peninsula?", "back": "A piece of land almost surrounded by water or projecting out into a body of water."}];
+const KEY = "grade6-geography-flashcards-v1";
+let saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+let filtered = [], order = [], pos = 0, revealed = false;
+
+const $ = id => document.getElementById(id);
+const unitSelect=$("unitSelect"), modeSelect=$("modeSelect"), card=$("card"), actions=$("actions");
+
+function idFor(c){return c.unit+"|"+c.front}
+function save(){localStorage.setItem(KEY,JSON.stringify(saved))}
+function populateUnits(){
+  const units=["All topics",...new Set(CARDS.map(c=>c.unit))];
+  unitSelect.innerHTML=units.map((u,i)=>`<option value="${i?u:"all"}">${u}</option>`).join("");
+}
+function build(){
+  const unit=unitSelect.value, mode=modeSelect.value;
+  filtered=CARDS.filter(c=>{
+    if(unit!=="all" && c.unit!==unit) return false;
+    const s=saved[idFor(c)];
+    if(mode==="practice") return s==="wrong";
+    if(mode==="unanswered") return !s;
+    return true;
+  });
+  order=filtered.map((_,i)=>i); pos=Math.min(pos,Math.max(0,order.length-1)); render();
+}
+function current(){return filtered[order[pos]]}
+function render(){
+  updateStats();
+  if(!filtered.length){
+    $("empty").style.display="block"; card.style.display="none"; actions.style.display="none";
+    $("statusText").textContent=""; $("positionText").textContent="0 of 0"; $("progressBar").style.width="0%"; return;
+  }
+  $("empty").style.display="none"; card.style.display="flex";
+  const c=current(); revealed=false; card.classList.remove("revealed"); actions.classList.remove("show");
+  $("unitLabel").textContent=c.unit; $("question").textContent=c.front; $("answer").textContent=c.back;
+  $("positionText").textContent=`${pos+1} of ${filtered.length}`;
+  $("statusText").textContent=saved[idFor(c)]==="right"?"Last answer: Right":saved[idFor(c)]==="wrong"?"Last answer: Needs practice":"Not answered yet";
+  $("progressBar").style.width=((pos+1)/filtered.length*100)+"%";
+}
+function reveal(){
+  if(!filtered.length) return; revealed=true; card.classList.add("revealed"); actions.classList.add("show");
+}
+function move(d){if(!filtered.length)return; pos=(pos+d+filtered.length)%filtered.length;render()}
+function grade(v){
+  if(!filtered.length)return; saved[idFor(current())]=v; save(); updateStats();
+  if(modeSelect.value!=="all"){build();} else {if(pos<filtered.length-1){pos++;render()} else render();}
+}
+function updateStats(){
+  const vals=Object.values(saved), r=vals.filter(v=>v==="right").length, w=vals.filter(v=>v==="wrong").length, total=r+w;
+  $("rightCount").textContent=r; $("wrongCount").textContent=w; $("accuracy").textContent=total?Math.round(r/total*100)+"%":"—";
+}
+function shuffle(){
+  for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]]}
+  pos=0;render();
+}
+populateUnits(); build();
+unitSelect.onchange=()=>{pos=0;build()}; modeSelect.onchange=()=>{pos=0;build()};
+$("shuffleBtn").onclick=shuffle;
+$("resetBtn").onclick=()=>{if(confirm("Reset all saved right/wrong results?")){saved={};save();pos=0;build()}};
+card.onclick=reveal; $("revealBtn").onclick=reveal; $("prevBtn").onclick=()=>move(-1); $("nextBtn").onclick=()=>move(1);
+$("wrongBtn").onclick=()=>grade("wrong"); $("rightBtn").onclick=()=>grade("right");
+document.addEventListener("keydown",e=>{
+  if(["SELECT","BUTTON"].includes(document.activeElement.tagName)) return;
+  if(e.code==="Space"){e.preventDefault();reveal()}
+  else if(e.key==="1")grade("wrong");
+  else if(e.key==="2")grade("right");
+  else if(e.key==="ArrowLeft")move(-1);
+  else if(e.key==="ArrowRight")move(1);
+});
+</script>
+</body>
+</html>
