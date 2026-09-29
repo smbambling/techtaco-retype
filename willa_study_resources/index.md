@@ -14,6 +14,7 @@ icon: icon-stack
 
 ## Social Studies 6
 - [Grade 6 United States History Vocabulary Flash Cards](/willa_study_resources/social_studies6/grade-6-us-history-vocabulary-flash-cards.html)
+- [Grade 6 Geography Flash Cards Q1](/willa_study_resources/social_studies6/grade-6-geography-flash-cards.html)
 
 ## Creative Writing 6
 - 
